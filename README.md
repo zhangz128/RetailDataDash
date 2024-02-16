@@ -1,5 +1,8 @@
 # RetailDataDash
 
+![image](https://github.com/ubco-mds-2023-labs/milestone1-group18/blob/main/img/sketch1.jpg)
+![image](https://github.com/ubco-mds-2023-labs/milestone1-group18/blob/main/img/sketch2.jpg)
+
 Our visualization dashboard is meticulously engineered for the sales operations departments of online retail businesses, designed to offer key insights into the market and customer behaviors to optimize strategic decisions and enhance operational efficiency. This intuitive tool aggregates extensive sales data, enabling the identification of top-selling products and the analysis of customer geographic locations, thus uncovering the relationship between product sales volumes and consumer behaviors.
 
 Central to our dashboard is the transaction analysis feature, which accentuates popular products by sales volume, complemented by a global map that visualizes customer distribution, enabling a detailed examination of sales data on a country-by-country basis. Additionally, the dashboard offers a comprehensive view of sales trends, equipping users with the means to detect shifts in market dynamics.
