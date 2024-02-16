@@ -1,7 +1,11 @@
 # RetailDataDash
 
+## Sketch
+
 ![image](https://github.com/ubco-mds-2023-labs/milestone1-group18/blob/main/img/sketch1.jpg)
 ![image](https://github.com/ubco-mds-2023-labs/milestone1-group18/blob/main/img/sketch2.jpg)
+
+## Description of APP
 
 Our visualization dashboard is meticulously engineered for the sales operations departments of online retail businesses, designed to offer key insights into the market and customer behaviors to optimize strategic decisions and enhance operational efficiency. This intuitive tool aggregates extensive sales data, enabling the identification of top-selling products and the analysis of customer geographic locations, thus uncovering the relationship between product sales volumes and consumer behaviors.
 
