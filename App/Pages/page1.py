@@ -10,6 +10,13 @@ import dash_bootstrap_components as dbc
 df = pd.read_csv('online_retail.csv')
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 
+rfm = pd.read_csv('processed_rfm_model.csv')
+cluster_counts = rfm['Cluster'].value_counts()
+
+loyal_count = cluster_counts.get('loyal customer', 0)
+potential_count = cluster_counts.get('potential loyal customer', 0)
+lost_count = cluster_counts.get('lost customer', 0)
+new_count = cluster_counts.get('new customer', 0)
 
 # top_products = df.groupby('Description')['Quantity'].sum().reset_index().nlargest(10, 'Quantity')
 
@@ -82,11 +89,59 @@ df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 #     ], className='row', style={'marginTop': '20px'})
 # ], style=CONTENT_STYLE)
 
+card_loyal = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H4("Loyal Costumers"),
+            html.H1(loyal_count),
+        ], className="border-start border-info border-5"
+    ),
+    className="text-center"
+)
+
+
+card_potential = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H4("Potential Loyal"),
+            html.H1(potential_count),
+        ], className="border-start border-info border-5"
+    ),
+    className="text-center",
+)
+
+
+card_new = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H4("New Costumers"),
+            html.H1(new_count),
+        ], className="border-start border-info border-5"
+    ),
+    className="text-center",
+)
+
+card_loss = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H4("Loss Costumers"),
+            html.H1(lost_count),
+        ], className="border-start border-info border-5"
+    ),
+    className="text-center",
+)
 
 dash.register_page(__name__, path='/', name='Home') # '/' is home page
 
 layout = html.Div(
     [
+    	dbc.Row(
+            [dbc.Col(card_loyal, width=3), dbc.Col(card_potential, width=3),
+             dbc.Col(card_new, width=3), dbc.Col(card_loss, width=3)],
+        ),
+
+        html.Br(),
+        
         dcc.DatePickerRange(
         id='date-picker-range',
         min_date_allowed=df['InvoiceDate'].min(),
@@ -146,10 +201,17 @@ def update_figures(start_date, end_date):
 
     # Update layout for both figures
     for fig in [fig_top_product, fig_top_region]:
+        for trace in fig.data:
+            trace.marker.color = 'rgba(27, 171, 210, 0.7)'
+
         fig.update_layout(
-            yaxis={'categoryorder':'total ascending'}, 
+            yaxis={'categoryorder':'total ascending', 'showgrid': False}, 
+            #xaxis={'showgrid': False},
             yaxis_title="",
-            title_font={'size': 24, 'color': 'black', 'family': "Arial, sans-serif"}
+            title_font={'size': 24, 'color': 'black', 'family': "Arial, sans-serif"},
+            paper_bgcolor='rgba(255,255,255,1)',  # Set the background around the plot to white
+            plot_bgcolor='rgba(237,249,253,1)',
+            title_x=0.5
         )
 
     return fig_top_product, fig_top_region
