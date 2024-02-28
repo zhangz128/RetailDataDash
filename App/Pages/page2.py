@@ -7,15 +7,15 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objs as go 
 from plotly.subplots import make_subplots
 from statsmodels.tsa.statespace.sarimax import SARIMAX
-from urllib.request import urlopen
-import json
+import pycountry
 
 df = pd.read_csv('online_retail.csv')
 rfm = pd.read_csv('processed_rfm_model.csv')
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 df['Total_Sale']=df['Quantity']*df['UnitPrice']
-df=df[df['Total_Sale']!=0]
 df=df.merge(rfm[['CustomerID', 'Cluster']], on='CustomerID', how='left')
+df=df[df['Total_Sale']!=0]
+df=df[df['Total_Sale']>=0]
 
 # # Customize the layout
 # fig_trend.update_layout(
@@ -78,20 +78,17 @@ pie_fig = px.pie(cluster_counts,
                             names='Cluster', 
                             title='Cluster Segmentation')
 
-# map 
-with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
-    counties = json.load(response)
+# bubble map
+def get_iso_alpha_3(country_name):
+    try:
+        return pycountry.countries.lookup(country_name).alpha_3
+    except LookupError:
+        return None
+df['iso_alpha'] = df['Country'].apply(get_iso_alpha_3)
 
-map_fig = px.choropleth_mapbox(
-    data_frame = df,   
-    geojson=counties, 
-    locations='Country', color='Cluster',
-    color_continuous_scale="Viridis",
-    mapbox_style="carto-positron",
-    zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
-    opacity=0.5,
-    labels={'Total_Sale':'Sales'}
-    )
+bubble_fig = px.scatter_geo(df, locations="iso_alpha", color="Cluster",
+                     hover_name="Country", size="Total_Sale",
+                     projection="natural earth")
 
 dash.register_page(__name__, path='/page-1') # '/' is home page
 
@@ -115,8 +112,8 @@ layout = html.Div(
         dcc.Graph(id='sales_trend_ts', figure=trend_fig),
 
         dbc.Row([
-            dbc.Col([dcc.Graph(id='sales_map', figure=map_fig)]),
-            dbc.Col([dcc.Graph(id='cluster_pie',figure=pie_fig)])            
+            dbc.Col([dcc.Graph(id='map', figure=bubble_fig)], width=8),
+            dbc.Col([dcc.Graph(id='cluster_pie',figure=pie_fig)], width=4)            
         ])
     ]
 )
@@ -168,26 +165,8 @@ def update_sales_trend(selected_country):
     cluster_counts = filtered_df['Cluster'].value_counts().reset_index()
     cluster_counts.columns = ['Cluster', 'count']
     pie_fig=px.pie(cluster_counts, 
-                            values='count', 
-                            names='Cluster', 
-                            title='Cluster Segmentation'
-                              )
+                   values='count', 
+                   names='Cluster', 
+                   title='Cluster Segmentation'
+                   )
     return [trend_fig, pie_fig]
-
-# @callback(
-#    Output('sales_map', 'figure'),
-#    [Input('cluster-slider', 'value')]
-#)
-#def update_sales_map(selected_cluster):
-#    filtered_df = df[df['clusters'] == selected_cluster]
-#    
-#    map_fig = px.scatter_mapbox(filtered_df,
-#                            lat="Lat",
-#                            lon="Lon",
-#                            size="Sales",
-#                            color="clusters",
-#                            size_max=15,
-#                            zoom=10,
-#                            mapbox_style="open-street-map")
-    
-#    return map_fig
