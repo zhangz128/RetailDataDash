@@ -21,9 +21,9 @@ sidebar = dbc.Nav(
 
 
 
-app1 = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB])
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB])
 
-app1.layout = dbc.Container([
+app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(html.Div('ONLINE RETAIL SALES DATA', style={'textAlign': 'center', 'fontSize':50, 
                                                          'color': 'white', 
@@ -45,7 +45,7 @@ fluid=True)
 
 
 if __name__ == '__main__':
-    app1.run_server(debug=True, port=8051)
+    app.run_server(debug=True, port=8051)
 
 
 
