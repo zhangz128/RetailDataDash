@@ -12,7 +12,7 @@ sidebar = dbc.Nav(
         [
             dbc.NavLink("Overview", href="/", active="exact"),
             dbc.NavLink("Region Information", href="/page-1", active="exact"),
-            dbc.NavLink("Other", href="/page-2", active="exact"),
+            #dbc.NavLink("Other", href="/page-2", active="exact"),
         ],
         vertical=True,
         pills=True,

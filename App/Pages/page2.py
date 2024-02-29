@@ -155,25 +155,52 @@ def update_sales_trend(selected_country):
             name='Prediction'     
             )) 
     trend_fig.add_trace(          
-        go.Scatter(x=monthly_sales.index, y=monthly_sales, name='Sales Trend', line=dict(color='rgba(0,143,140,1)')),          
+        go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)')),          
         secondary_y=False,           
         ) 
-    trend_fig.update_layout(     
-        title='Sales Trend',     
+    
+    trend_fig.update_layout(    
+        title={
+            'text': f'Sales Trend for {selected_country}',
+            'y':0.9,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': {
+                #'family': 'Arial, sans-serif',
+                'size':24,
+                'color': 'black'
+            }
+        },     
         xaxis_title='Month',     
         yaxis_title='Sales',
         paper_bgcolor='rgba(255,255,255,1)',
         plot_bgcolor='rgba(237,249,253,1)',
-        title_x=0.5
         )
     
     cluster_counts = filtered_df['Cluster'].value_counts().reset_index()
     cluster_counts.columns = ['Cluster', 'count']
+    custom_colors = ['#AAE5F4','#4991BA','#FFC357','#FFF7C5']
     pie_fig=px.pie(cluster_counts, 
                    values='count', 
-                   names='Cluster', 
-                   title='Cluster Segmentation'
+                   names='Cluster',
+                   color_discrete_sequence=custom_colors                  
                    )
+    
+    pie_fig.update_layout(
+        title={
+            'text': f'Cluster Segmentation <br> for {selected_country}',
+            'y':0.9,
+            'x':0.43,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': {
+                #'family': 'Arial, sans-serif',
+                'size':20,
+                'color': 'black'
+            }
+        }
+    )
     return [trend_fig, pie_fig]
 
 @callback(
@@ -199,6 +226,22 @@ def update_map(selected_segment):
                         color='Number_of_Customers',
                         hover_name='Country', 
                         projection='natural earth',
-                        title='Customer Segmentation Heatmap')
+                        )
+    
+    bubble_fig.update_layout(
+        title={
+            'text': 'Customer Segmentation Heatmap',
+            'y':0.95,
+            'x':0.43,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': {
+                #'family': 'Arial, sans-serif',
+                'size':24,
+                'color': 'black'
+            }
+        },
+        plot_bgcolor='lightblue')  # Changes the plot's background color
+        
     
     return bubble_fig
