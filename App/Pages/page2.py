@@ -36,36 +36,14 @@ forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
 df_ts = df_ts.combine_first(forecast_df)
 
 monthly_sales = df_ts['Total_Sale'].resample('ME').sum()
-trend_fig = make_subplots(specs=[[{"secondary_y": False}]])
-trend_fig.add_trace(     
-    go.Bar(x=monthly_sales.index[:-3], 
-           y=monthly_sales[:-3], 
-           name='Monthly Sales'),     
-    secondary_y=False, 
-    )
-trend_fig.add_trace(     
-    go.Bar(         
-        x=monthly_sales.index[-3:],          
-        y=monthly_sales[-3:],        
-        marker=dict(color='rgba(255, 0, 0, 0.5)'),
-        name='Prediction'
-        ))
-trend_fig.add_trace(     
-    go.Scatter(x=monthly_sales.index, y=monthly_sales, name='Sales Trend'),     
-    secondary_y=False,      
-    )
-trend_fig.update_layout(
-    title='Sales Trend',
-    xaxis_title='Month',
-    yaxis_title='Sales'
-)
-# pie
-cluster_counts = df['Cluster'].value_counts().reset_index()
-cluster_counts.columns = ['Cluster', 'count']
-pie_fig = px.pie(cluster_counts, 
-                            values='count', 
-                            names='Cluster', 
-                            title='Cluster Segmentation')
+# trend_fig = make_subplots(specs=[[{"secondary_y": False}]])
+# trend_fig.add_trace(     
+#     go.Bar(x=monthly_sales.index[:-3], 
+#            y=monthly_sales[:-3], 
+#            name='Monthly Sales'),     
+#     secondary_y=False, 
+#     )
+  
 
 #bubble map
 def get_iso_alpha_3(country_name):
@@ -99,7 +77,7 @@ layout = html.Div([
         options=[{'label': country, 'value': country} for country in df['Country'].unique()],
         value=df['Country'].unique()[0]  
     ),
-    dcc.Graph(id='sales_trend_ts', figure=trend_fig),
+    dcc.Graph(id='sales_trend_ts'),
     dbc.Row([
         dbc.Col([
             dcc.Graph(id='map'),
@@ -114,7 +92,7 @@ layout = html.Div([
             )], width=8),
             
         dbc.Col([
-            dcc.Graph(id='cluster_pie', figure=pie_fig)
+            dcc.Graph(id='cluster_pie')
         ], width=4)
     ])
 ])
