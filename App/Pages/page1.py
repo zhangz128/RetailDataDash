@@ -18,76 +18,6 @@ potential_count = cluster_counts.get('potential loyal customer', 0)
 lost_count = cluster_counts.get('lost customer', 0)
 new_count = cluster_counts.get('new customer', 0)
 
-# top_products = df.groupby('Description')['Quantity'].sum().reset_index().nlargest(10, 'Quantity')
-
-# top_countries = df.groupby('Country')['Quantity'].sum().reset_index().nlargest(10, 'Quantity')
-
-# # Sort the DataFrame
-# top_countries_sorted = top_countries.sort_values('Quantity', ascending=False)
-# top_products_sorted = top_products.sort_values('Quantity', ascending=False)
-
-
-# #fig_pricing = px.scatter(df, x='UnitPrice', y='Quantity', title='Pricing Elasticity')
-# fig_top_product = px.bar(top_products_sorted, x='Quantity', y='Description', orientation='h', title='Top Product')
-# fig_top_region = px.bar(top_countries_sorted, x='Quantity', y='Country', orientation='h', title='Top Region')
-
-# fig_top_region.update_layout(
-#     title={
-#         'text': 'Top 10 Regions',
-#         'y':0.9,
-#         'x':0.5,
-#         'xanchor': 'center',
-#         'yanchor': 'top',
-#         'font': {'size': 24, 'color': 'black', 'family': "Arial, sans-serif"}  
-#     },
-#     yaxis={'categoryorder':'total ascending'}, yaxis_title=""
-# )
-
-# fig_top_product.update_layout(
-#     title={
-#         'text': 'Top 10 Products',
-#         'y':0.9,
-#         'x':0.5,
-#         'xanchor': 'center',
-#         'yanchor': 'top',
-#         'font': {'size': 24, 'color': 'black', 'family': "Arial, sans-serif"}  
-#     },
-#     yaxis={'categoryorder':'total ascending'}, yaxis_title=""
-# )
-
-# fig_pricing.update_layout(
-#     title={
-#         'text': 'Price Elasticity',
-#         'y':0.9,
-#         'x':0.5,
-#         'xanchor': 'center',
-#         'yanchor': 'top',
-#         'font': {'size': 24, 'color': 'black', 'family': "Arial, sans-serif"}  
-#     },
-#     yaxis={'categoryorder':'total ascending'}
-# )
-
-# CONTENT_STYLE = {
-#     "margin-left": "18rem",
-#     "margin-right": "2rem",
-#     "padding": "2rem 1rem",
-# }
-
-# content = html.Div(id="page-content", children=[
-#     html.H1(children='ONLINE RETAIL SALES DATA', style={'textAlign': 'center',
-#                                                          'color': 'white', 
-#                                                          'background-color':'skyblue'}),
-    
-#     html.Div([
-#         html.Div([
-#             dcc.Graph(figure=fig_pricing, style={'height': '400px'}),
-#         ], className='col-md-6', style={'padding': '10px'}),
-#         html.Div([
-#             dcc.Graph(figure=fig_top_product, style={'height': '500px'}),
-#             dcc.Graph(figure=fig_top_region, style={'height': '500px'}),
-#         ], className='col-md-6', style={'padding': '10px'}),
-#     ], className='row', style={'marginTop': '20px'})
-# ], style=CONTENT_STYLE)
 
 card_loyal = dbc.Card(
     dbc.CardBody(
@@ -216,20 +146,3 @@ def update_figures(start_date, end_date):
 
     return fig_top_product, fig_top_region
 
-# @callback(Output("page-content", "children"), [Input("url", "pathname")])
-# def render_page_content(pathname):
-#     if pathname == "/":
-#         return html.P(content)
-#     elif pathname == "/page-1":
-#         return html.P("This is the content of page 1. Yay!")
-#     elif pathname == "/page-2":
-#         return html.P("Oh cool, this is page 2!")
-#     # If the user tries to reach a different page, return a 404 message
-#     return html.Div(
-#         [
-#             html.H1("404: Not found", className="text-danger"),
-#             html.Hr(),
-#             html.P(f"The pathname {pathname} was not recognised..."),
-#         ],
-#         className="p-3 bg-light rounded-3",
-#     )

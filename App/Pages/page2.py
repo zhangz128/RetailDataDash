@@ -17,22 +17,11 @@ df=df.merge(rfm[['CustomerID', 'Cluster']], on='CustomerID', how='left')
 df=df[df['Total_Sale']!=0]
 df=df[df['Total_Sale']>=0]
 
-# # Customize the layout
-# fig_trend.update_layout(
-#     xaxis_title='Month',
-#     yaxis_title='Total Revenue',
-#     xaxis=dict(
-#         tickangle=-45,
-#         title_font=dict(size=14),
-#         tickfont=dict(size=12)
-#     ),
-#     yaxis=dict(
-#         title_font=dict(size=14),
-#         tickfont=dict(size=12)
-#     )
-# )
+df['Year'] = df['InvoiceDate'].dt.year
+years = df['Year'].unique()
+years.sort()
 
-# ts 
+
 df1 = df
 df_ts = df1[['InvoiceDate', 'Total_Sale']]
 df_ts.set_index('InvoiceDate', inplace=True)
@@ -46,7 +35,7 @@ forecast_df = pd.DataFrame(forecast)
 forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
 df_ts = df_ts.combine_first(forecast_df)
 
-monthly_sales = df_ts['Total_Sale'].resample('M').sum()
+monthly_sales = df_ts['Total_Sale'].resample('ME').sum()
 trend_fig = make_subplots(specs=[[{"secondary_y": False}]])
 trend_fig.add_trace(     
     go.Bar(x=monthly_sales.index[:-3], 
@@ -78,45 +67,57 @@ pie_fig = px.pie(cluster_counts,
                             names='Cluster', 
                             title='Cluster Segmentation')
 
-# bubble map
+#bubble map
 def get_iso_alpha_3(country_name):
     try:
         return pycountry.countries.lookup(country_name).alpha_3
     except LookupError:
         return None
+    
 df['iso_alpha'] = df['Country'].apply(get_iso_alpha_3)
 
-bubble_fig = px.scatter_geo(df, locations="iso_alpha", color="Cluster",
-                     hover_name="Country", size="Total_Sale",
-                     projection="natural earth")
+external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
-dash.register_page(__name__, path='/page-1') # '/' is home page
+# country_sales = df.groupby('Country')['Total_Sale'].sum().reset_index()
 
-layout = html.Div(
-    [
-        dcc.Dropdown(
+# country_sales['iso_alpha'] = country_sales['Country'].apply(get_iso_alpha_3)
+
+
+# bubble_fig = px.choropleth(country_sales, locations='iso_alpha', 
+#                      hover_name='Country', projection='natural earth',
+#                      title='Heatmap of costomers segmentation')
+
+dash.register_page(__name__, path='/page-1', external_stylesheets=external_stylesheets) # '/' is home page
+
+cluster_mapping = {
+    i: cluster for i, cluster in enumerate(
+        ['lost customer', 'loyal customer', 'new customer', 'potential loyal customer'])}
+
+layout = html.Div([
+    dcc.Dropdown(
         id='country-selector',
         options=[{'label': country, 'value': country} for country in df['Country'].unique()],
         value=df['Country'].unique()[0]  
     ),
-        # dbc.Row(
-        #     [
-        #         dbc.Col(
-        #             [
-        #                 dcc.Dropdown(options=df.continent.unique(),
-        #                              id='cont-choice')
-        #             ], xs=10, sm=10, md=8, lg=4, xl=4, xxl=4
-        #         )
-        #     ]
-        # ),
-        dcc.Graph(id='sales_trend_ts', figure=trend_fig),
+    dcc.Graph(id='sales_trend_ts', figure=trend_fig),
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(id='map'),
 
-        dbc.Row([
-            dbc.Col([dcc.Graph(id='map', figure=bubble_fig)], width=8),
-            dbc.Col([dcc.Graph(id='cluster_pie',figure=pie_fig)], width=4)            
-        ])
-    ]
-)
+            dcc.Slider(
+                id='cluster-slider',
+                min=0,
+                max=len(cluster_mapping) - 1,  # Since index starts at 0
+                value=0,  # Default value
+                marks={i: name for i, name in cluster_mapping.items()},
+                step=1  # Force selection of only integer positions
+            )], width=8),
+            
+        dbc.Col([
+            dcc.Graph(id='cluster_pie', figure=pie_fig)
+        ], width=4)
+    ])
+])
 
 @callback(
     [Output('sales_trend_ts', 'figure'),
@@ -137,11 +138,12 @@ def update_sales_trend(selected_country):
     forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
     df_ts = df_ts.combine_first(forecast_df)
 
-    monthly_sales = df_ts['Total_Sale'].resample('M').sum() 
+    monthly_sales = df_ts['Total_Sale'].resample('ME').sum() 
     trend_fig = make_subplots(specs=[[{"secondary_y": False}]]) 
     trend_fig.add_trace(          
         go.Bar(x=monthly_sales.index[:-3],             
-               y=monthly_sales[:-3],             
+               y=monthly_sales[:-3],
+               marker=dict(color='rgba(27, 171, 210, 0.7)'),             
                name='Monthly Sales'),          
                secondary_y=False,      
                ) 
@@ -153,13 +155,16 @@ def update_sales_trend(selected_country):
             name='Prediction'     
             )) 
     trend_fig.add_trace(          
-        go.Scatter(x=monthly_sales.index, y=monthly_sales, name='Sales Trend'),          
+        go.Scatter(x=monthly_sales.index, y=monthly_sales, name='Sales Trend', line=dict(color='rgba(0,143,140,1)')),          
         secondary_y=False,           
         ) 
     trend_fig.update_layout(     
         title='Sales Trend',     
         xaxis_title='Month',     
-        yaxis_title='Sales'
+        yaxis_title='Sales',
+        paper_bgcolor='rgba(255,255,255,1)',
+        plot_bgcolor='rgba(237,249,253,1)',
+        title_x=0.5
         )
     
     cluster_counts = filtered_df['Cluster'].value_counts().reset_index()
@@ -170,3 +175,30 @@ def update_sales_trend(selected_country):
                    title='Cluster Segmentation'
                    )
     return [trend_fig, pie_fig]
+
+@callback(
+    Output('map', 'figure'),
+    [Input('cluster-slider', 'value')]
+)
+def update_map(selected_segment):
+    cluster_name = cluster_mapping[selected_segment]
+    # Filter your dataset based on the selected segment
+    # This assumes you have a way to filter your `df` based on the segmentation, which isn't shown here
+    filtered_df = df[df['Cluster'] == cluster_name]  # Example filter, adjust to your dataframe
+    
+    # Group by country and sum total sales again for the filtered dataset
+    # country_sales = filtered_df.groupby('Country')['CustomerID'].unique().reset_index()
+    # country_sales['iso_alpha'] = country_sales['Country'].apply(get_iso_alpha_3)
+    country_customers = filtered_df.groupby('Country')['CustomerID'].nunique().reset_index()
+    country_customers.rename(columns={'CustomerID': 'Number_of_Customers'}, inplace=True)
+    country_customers['iso_alpha'] = country_customers['Country'].apply(get_iso_alpha_3)
+    
+    
+    # Generate a new choropleth figure based on the filtered dataset
+    bubble_fig = px.choropleth(country_customers, locations='iso_alpha',
+                        color='Number_of_Customers',
+                        hover_name='Country', 
+                        projection='natural earth',
+                        title='Customer Segmentation Heatmap')
+    
+    return bubble_fig

@@ -9,7 +9,6 @@ import altair as alt
 
 sidebar = dbc.Nav(
         
-    
         [
             dbc.NavLink("Overview", href="/", active="exact"),
             dbc.NavLink("Region Information", href="/page-1", active="exact"),
