@@ -8,9 +8,11 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import pycountry
+import os
 
-df = pd.read_csv('online_retail.csv')
-rfm = pd.read_csv('processed_rfm_model.csv')
+path = os.path.dirname(os.path.abspath(__file__))
+df = pd.read_csv(path + '/../../data/raw/online_retail.csv')
+rfm = pd.read_csv(path + '/../../data/processed/processed_rfm_model.csv')
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 df['Total_Sale']=df['Quantity']*df['UnitPrice']
 df=df.merge(rfm[['CustomerID', 'Cluster']], on='CustomerID', how='left')
@@ -35,7 +37,7 @@ forecast_df = pd.DataFrame(forecast)
 forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
 df_ts = df_ts.combine_first(forecast_df)
 
-monthly_sales = df_ts['Total_Sale'].resample('ME').sum()
+monthly_sales = df_ts['Total_Sale'].resample('M').sum()
 # trend_fig = make_subplots(specs=[[{"secondary_y": False}]])
 # trend_fig.add_trace(     
 #     go.Bar(x=monthly_sales.index[:-3], 
@@ -116,7 +118,7 @@ def update_sales_trend(selected_country):
     forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
     df_ts = df_ts.combine_first(forecast_df)
 
-    monthly_sales = df_ts['Total_Sale'].resample('ME').sum() 
+    monthly_sales = df_ts['Total_Sale'].resample('M').sum() 
     trend_fig = make_subplots(specs=[[{"secondary_y": False}]]) 
     trend_fig.add_trace(          
         go.Bar(x=monthly_sales.index[:-3],             

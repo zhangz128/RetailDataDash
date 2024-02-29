@@ -4,13 +4,13 @@ from dash import Dash, html, dash_table, dcc, callback
 from dash.dependencies import Input, Output
 import plotly.express as px
 import dash_bootstrap_components as dbc
+import os
 
-
-
-df = pd.read_csv('online_retail.csv')
+path = os.path.dirname(os.path.abspath(__file__))
+df = pd.read_csv(path + '/../../data/raw/online_retail.csv')
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 
-rfm = pd.read_csv('processed_rfm_model.csv')
+rfm = pd.read_csv(path + '/../../data/processed/processed_rfm_model.csv')
 cluster_counts = rfm['Cluster'].value_counts()
 
 loyal_count = cluster_counts.get('loyal customer', 0)
