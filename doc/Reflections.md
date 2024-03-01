@@ -17,7 +17,7 @@ However, there are several areas where our dashboard can be improved:
 - **User Experience**: On page two, we have observed that users experience noticeable lag, which requires optimization. Additionally, the layout needs clearer separation of functional areas to allow users to easily identify and use the features they need, reducing confusion.
 - **Inconsistencies in Sales Trend Analysis**: The bar chart for monthly sales trends on Page 2 shows some inconsistencies (e.g., the x-axis might display January 2011, but hovering over a bar shows December 31st), which may confuse users.
 - **Dashboard Theme and Color Scheme**: The overall appearance of the dashboard needs enhancement to look more professional.
-- **Reassessing Customer Needs**: It's crucial to recall our initial scenario and prototype to ensure our dashboard fully meets our customers' requirements. A thorough reevaluation of customer needs will help us identify any functionalities or design elements that may have been overlooked or require adjustment to better align with user expectations.
+- **Reassessing Customer Needs**: As our final step, it's essential to revisit our original scenario and prototype to guarantee that our dashboard fully satisfies our customers' needs. By conducting a comprehensive review of customer requirements, we can uncover any missed functionalities or design aspects that need refinement. This ensures our dashboard is perfectly aligned with user expectations.
 
 ## Next Steps
 
