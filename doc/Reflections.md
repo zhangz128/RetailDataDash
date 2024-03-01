@@ -14,7 +14,7 @@ At this stage, our dashboard has successfully implemented all the functionalitie
 
 However, there are several areas where our dashboard can be improved:
 
-- **User Experience**: On page two, we have observed that users experience noticeable lag, which requires optimization. Additionally, the layout and typography need clearer separation of functional areas to allow users to easily identify and use the features they need, reducing confusion.
+- **User Experience**: On page two, we have observed that users experience noticeable lag, which requires optimization. Additionally, the layout needs clearer separation of functional areas to allow users to easily identify and use the features they need, reducing confusion.
 - **Inconsistencies in Sales Trend Analysis**: The bar chart for monthly sales trends on Page 2 shows some inconsistencies (e.g., the x-axis might display January 2011, but hovering over a bar shows December 31st), which may confuse users.
 - **Dashboard Theme and Color Scheme**: The overall appearance of the dashboard needs enhancement to look more professional.
 
