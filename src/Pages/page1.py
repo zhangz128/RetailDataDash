@@ -5,10 +5,10 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import dash_bootstrap_components as dbc
 
-df = pd.read_csv('/../../data/raw/online_retail.csv')
+df = pd.read_csv('https://github.com/zhangz128/RetailDataDash/blob/main/data/raw/online_retail.csv')
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 
-rfm = pd.read_csv('/../../data/processed/processed_rfm_model.csv')
+rfm = pd.read_csv('https://github.com/zhangz128/RetailDataDash/blob/main/data/processed/processed_rfm_model.csv')
 cluster_counts = rfm['Cluster'].value_counts()
 
 loyal_count = cluster_counts.get('loyal customer', 0)
