@@ -21,7 +21,7 @@ sidebar = dbc.Nav(
 
 
 
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SPACELAB])
+app = dash.Dash(__name__, use_pages=True, pages_folder="Pages", external_stylesheets=[dbc.themes.SPACELAB])
 server = app.server
 
 app.layout = dbc.Container([
