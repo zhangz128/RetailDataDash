@@ -122,7 +122,8 @@ def update_figures(clickData):
                 go.Bar(x=monthly_sales.index, 
                        y=monthly_sales.values, 
                        marker=dict(color='rgba(248,191,93,0.7)'), 
-                       name='Monthly Sales'))
+                       name='Monthly Sales',
+                       hovertemplate='%{y}<extra></extra>'))
             trend_fig.update_layout(
                 **base_layout,    
                 title={
@@ -157,7 +158,8 @@ def update_figures(clickData):
             go.Bar(x=monthly_sales.index[:-3],             
                 y=monthly_sales[:-3],
                 marker=dict(color='rgba(248,191,93,0.7)'),             
-                name='Monthly Sales'),          
+                name='Monthly Sales',
+                hovertemplate='%{y}<extra></extra>'),          
                 secondary_y=False,      
                 ) 
             trend_fig.add_trace(          
@@ -165,10 +167,12 @@ def update_figures(clickData):
                 x=monthly_sales.index[-3:],                   
                 y=monthly_sales[-3:],                 
                 marker=dict(color='rgba(255, 0, 0, 0.5)'),
-                name='Prediction'     
+                name='Prediction',
+                hovertemplate='%{y}<extra></extra>'     
                 )) 
             trend_fig.add_trace(          
-            go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)')),          
+            go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)'),
+                       hovertemplate='%{y}<extra></extra>'),          
             secondary_y=False,           
             ) 
     
@@ -236,7 +240,8 @@ def update_figures(clickData):
         go.Bar(x=monthly_sales.index[:-3],             
                 y=monthly_sales[:-3],
                 marker=dict(color='rgba(248,191,93,0.7)'),             
-                name='Monthly Sales'),          
+                name='Monthly Sales',
+                hovertemplate='%{y}<extra></extra>'),          
                 secondary_y=False,      
                 ) 
         trend_fig.add_trace(          
@@ -244,10 +249,12 @@ def update_figures(clickData):
                 x=monthly_sales.index[-3:],                   
                 y=monthly_sales[-3:],                 
                 marker=dict(color='rgba(255, 0, 0, 0.5)'),
-                name='Prediction'     
+                name='Prediction',
+                hovertemplate='%{y}<extra></extra>'     
                 )) 
         trend_fig.add_trace(          
-            go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)')),          
+            go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)'),
+                       hovertemplate='%{y}<extra></extra>'),          
             secondary_y=False,           
             ) 
     
