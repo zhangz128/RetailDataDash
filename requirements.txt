@@ -1,9 +1,10 @@
-altair==5.2.0
+altair==4.2.2
 dash==2.15.0
 dash_bootstrap_components==1.5.0
-pandas==2.2.1
-plotly==5.9.0
+pandas==1.5.3
+plotly==5.18.0
+pmdarima==2.0.4
 pycountry==23.12.11
-statsmodels==0.14.0
+statsmodels==0.14.1
 gunicorn
 dash-tools
