@@ -41,7 +41,7 @@ forecast_df = pd.DataFrame(forecast)
 forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
 df_ts = df_ts.combine_first(forecast_df)
 
-monthly_sales = df_ts['Total_Sale'].resample('ME').sum()
+monthly_sales = df_ts['Total_Sale'].resample('M').sum()
 
 def get_iso_alpha_3(country_name):
     try:
@@ -180,7 +180,7 @@ def update_figures(clickData):
         forecast_df = pd.DataFrame(forecast)
         forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
         df_ts = df_ts.combine_first(forecast_df)
-        monthly_sales = df_ts['Total_Sale'].resample('ME').sum()
+        monthly_sales = df_ts['Total_Sale'].resample('M').sum()
 
         trend_fig = make_subplots(specs=[[{"secondary_y": False}]]) 
         trend_fig.add_trace(          
