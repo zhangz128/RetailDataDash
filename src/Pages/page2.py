@@ -8,11 +8,15 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import pycountry
-import os
+import pathlib
+import pmdarima as pm
 
-path = os.path.dirname(os.path.abspath(__file__))
-df = pd.read_csv(path + '/../../data/raw/online_retail.csv')
-rfm = pd.read_csv(path + '/../../data/processed/processed_rfm_model.csv')
+
+PATH = pathlib.Path(__file__).parent.parent.parent
+DATA_PATH = PATH.joinpath('data').resolve()
+df = pd.read_csv(DATA_PATH.joinpath('raw/online_retail.csv'))
+rfm = pd.read_csv(DATA_PATH.joinpath('processed/processed_rfm_model.csv'))
+
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 df['Total_Sale']=df['Quantity']*df['UnitPrice']
 df=df.merge(rfm[['CustomerID', 'Cluster']], on='CustomerID', how='left')
