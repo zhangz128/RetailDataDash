@@ -4,14 +4,14 @@ from dash import Dash, html, dash_table, dcc, callback
 from dash.dependencies import Input, Output
 import plotly.express as px
 import dash_bootstrap_components as dbc
-import pathlib
+import os
 
-PATH = pathlib.Path(__file__).parent.parent.parent
-DATA_PATH = PATH.joinpath('data').resolve()
-df = pd.read_csv(DATA_PATH.joinpath('raw/online_retail.csv'))
+SOLAR = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/solar/bootstrap.min.css"
+path = os.path.dirname(os.path.abspath(__file__))
+df = pd.read_csv(path + '/../../data/raw/online_retail.csv')
 df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 
-rfm = pd.read_csv(DATA_PATH.joinpath('processed/processed_rfm_model.csv'))
+rfm = pd.read_csv(path + '/../../data/processed/processed_rfm_model.csv')
 cluster_counts = rfm['Cluster'].value_counts()
 
 loyal_count = cluster_counts.get('loyal customer', 0)
@@ -23,9 +23,9 @@ new_count = cluster_counts.get('new customer', 0)
 card_loyal = dbc.Card(
     dbc.CardBody(
         [
-            html.H4("Loyal Costumers"),
-            html.H1(loyal_count),
-        ], className="border-start border-info border-5"
+            html.H4("Loyal Costumers", className="card-title text-primary"),
+            html.H1(loyal_count, style={'color': '#ffc64b'}),
+        ], className="border-start border-info border-5",
     ),
     className="text-center"
 )
@@ -34,8 +34,8 @@ card_loyal = dbc.Card(
 card_potential = dbc.Card(
     dbc.CardBody(
         [
-            html.H4("Potential Loyal"),
-            html.H1(potential_count),
+            html.H4("Potential Loyal", className="card-title text-primary"),
+            html.H1(potential_count, style={'color': '#ffc64b'}),
         ], className="border-start border-info border-5"
     ),
     className="text-center",
@@ -45,8 +45,8 @@ card_potential = dbc.Card(
 card_new = dbc.Card(
     dbc.CardBody(
         [
-            html.H4("New Costumers"),
-            html.H1(new_count),
+            html.H4("New Costumers", className="card-title text-primary"),
+            html.H1(new_count, style={'color': '#ffc64b'}),
         ], className="border-start border-info border-5"
     ),
     className="text-center",
@@ -55,8 +55,8 @@ card_new = dbc.Card(
 card_loss = dbc.Card(
     dbc.CardBody(
         [
-            html.H4("Loss Costumers"),
-            html.H1(lost_count),
+            html.H4("Loss Costumers", className="card-title text-primary"),
+            html.H1(lost_count, style={'color': '#ffc64b'}),
         ], className="border-start border-info border-5"
     ),
     className="text-center",
@@ -66,49 +66,45 @@ dash.register_page(__name__, path='/', name='Home') # '/' is home page
 
 layout = html.Div(
     [
-    	dbc.Row(
+        html.Div([
+            html.Label('Select Date Range:', style={'fontSize': '25px', 'marginRight': '10px'}),
+            dcc.DatePickerRange(
+                id='date-picker-range',
+                min_date_allowed=df['InvoiceDate'].min(),
+                max_date_allowed=df['InvoiceDate'].max(),
+                start_date=df['InvoiceDate'].min(),
+                end_date=df['InvoiceDate'].max(),
+                display_format='YYYY-MM-DD',
+                start_date_placeholder_text='Start Period',
+                end_date_placeholder_text='End Period',
+            )],
+            style={'marginBottom': '30px'}  
+        ),
+
+        dbc.Row(
             [dbc.Col(card_loyal, width=3), dbc.Col(card_potential, width=3),
              dbc.Col(card_new, width=3), dbc.Col(card_loss, width=3)],
         ),
 
         html.Br(),
-        
-        dcc.DatePickerRange(
-        id='date-picker-range',
-        min_date_allowed=df['InvoiceDate'].min(),
-        max_date_allowed=df['InvoiceDate'].max(),
-        start_date=df['InvoiceDate'].min(),
-        end_date=df['InvoiceDate'].max(),
-        display_format='YYYY-MM-DD',
-        start_date_placeholder_text='Start Period',
-        end_date_placeholder_text='End Period',
-    ),
-        # dbc.Row(
-        #     [
-        #         dbc.Col(
-        #             [
-        #                 dcc.Dropdown(options=df.continent.unique(),
-        #                              id='cont-choice')
-        #             ], xs=10, sm=10, md=8, lg=4, xl=4, xxl=4
-        #         )
-        #     ]
-        # ),
 
         dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        dcc.Graph(id='top_product')
-                    ], width=6
-                ),
+    [
+        dbc.Col(
+            html.Div(
+                dcc.Graph(id='top_product'),
+                className="bg-dark text-white"
+            ), width=6
+        ),
 
-                dbc.Col(
-                    [
-                        dcc.Graph(id='top_region')
-                    ], width=6
-                )
-            ]
+        dbc.Col(
+            html.Div(
+                dcc.Graph(id='top_region'),
+                className="bg-dark text-white"
+            ), width=6
         )
+    ]
+)
     ]
 )
 
@@ -133,15 +129,18 @@ def update_figures(start_date, end_date):
     # Update layout for both figures
     for fig in [fig_top_product, fig_top_region]:
         for trace in fig.data:
-            trace.marker.color = 'rgba(27, 171, 210, 0.7)'
+            trace.marker.color = 'rgba(248,191,93,0.7)' 
 
         fig.update_layout(
             yaxis={'categoryorder':'total ascending', 'showgrid': False}, 
             #xaxis={'showgrid': False},
             yaxis_title="",
-            title_font={'size': 24, 'color': 'black', 'family': "Arial, sans-serif"},
-            paper_bgcolor='rgba(255,255,255,1)',  # Set the background around the plot to white
-            plot_bgcolor='rgba(237,249,253,1)',
+            title_font={'size': 24, 'color': '#f8bf5d', 'family': "Arial, sans-serif"},
+            paper_bgcolor='rgb(34, 67, 74)',  # Bootstrap's `.bg-dark` color
+            plot_bgcolor='rgb(34, 67, 74)',
+            font=dict(color='white'),
+            #paper_bgcolor='rgba(255,255,255,1)',  # Set the background around the plot to white
+            #plot_bgcolor='rgba(237,249,253,1)',
             title_x=0.5
         )
 
