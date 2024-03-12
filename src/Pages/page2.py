@@ -202,7 +202,7 @@ def update_figures(clickData):
             yaxis_title='Sales',
             )
 
-        cluster_counts = filtered_df['Cluster'].value_counts().reset_index()
+        cluster_counts = filtered_df.groupby('Cluster')['CustomerID'].nunique().reset_index()
         cluster_counts.columns = ['Cluster', 'count']
         custom_colors = ['#dc541b','#2e7d5e','#de9f37','#FFF7C5']
         pie_fig=px.pie(cluster_counts, 
@@ -301,7 +301,7 @@ def update_figures(clickData):
             yaxis_title='Sales',
             )
         
-        cluster_counts = df['Cluster'].value_counts().reset_index()
+        cluster_counts = df.groupby('Cluster')['CustomerID'].nunique().reset_index()
         cluster_counts.columns = ['Cluster', 'count']
         custom_colors = ['#dc541b','#2e7d5e','#de9f37','#FFF7C5']
         pie_fig=px.pie(cluster_counts, 
