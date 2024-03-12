@@ -189,7 +189,15 @@ def update_figures(clickData):
                     'size':24,
                 
                 }
-            },     
+            },
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=-0.2,
+                xanchor='left',
+                x=0.6,
+                font=dict(size=10)
+            ),   
             xaxis_title='Month',     
             yaxis_title='Sales',
             )
@@ -202,13 +210,14 @@ def update_figures(clickData):
                 names='Cluster',
                 color_discrete_sequence=custom_colors                  
                 )
+        pie_fig.update_traces(domain=dict(x=[0.1, 0.9], y=[0.2, 0.8]))
         pie_fig.update_layout(
             **base_layout,
             margin=dict(l=0, r=0, t=20, b=20),
             title={
-                'text': f'Costumer Segmentation <br> for {selected_country}',
-                'y':0.9,
-                'x':0.43,
+                'text': f'Customer Segmentation <br> for {selected_country}',
+                'y':0.93,
+                'x':0.5,
                 'xanchor': 'center',
                 'yanchor': 'top',
                 'font': {
@@ -216,6 +225,14 @@ def update_figures(clickData):
                     'size':20,
                 }
             },
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=0,
+                xanchor='center',
+                x=0.5,
+                font=dict(size=10)
+            )
         )
     
         return trend_fig, pie_fig
@@ -271,7 +288,15 @@ def update_figures(clickData):
                     'size':24,
                 
                 }
-            },     
+            },
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=-0.2,
+                xanchor='left',
+                x=0.6,
+                font=dict(size=10)
+            ),
             xaxis_title='Month',     
             yaxis_title='Sales',
             )
@@ -284,13 +309,14 @@ def update_figures(clickData):
                 names='Cluster',
                 color_discrete_sequence=custom_colors                  
                 )
+        pie_fig.update_traces(domain=dict(x=[0.1, 0.9], y=[0.2, 0.8]))
         pie_fig.update_layout(
             **base_layout,
             margin=dict(l=0, r=0, t=20, b=20),
             title={
-                'text': f'Costumer Segmentation <br> in Total',
-                'y':0.9,
-                'x':0.43,
+                'text': f'Customer Segmentation <br> in Total',
+                'y':0.93,
+                'x':0.5,
                 'xanchor': 'center',
                 'yanchor': 'top',
                 'font': {
@@ -298,6 +324,14 @@ def update_figures(clickData):
                     'size':20,
                 }
             },
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=0,
+                xanchor='center',
+                x=0.5,
+                font=dict(size=10)
+            )
         )
 
         return trend_fig, pie_fig
@@ -312,7 +346,6 @@ def update_map(selected_segment):
         filtered_df = df.copy()
     else:
         cluster_name = cluster_mapping[selected_segment]
-    # Filter your dataset based on the selected segment
     # This assumes you have a way to filter your `df` based on the segmentation, which isn't shown here
         filtered_df = df[df['Cluster'] == cluster_name]  # Example filter, adjust to your dataframe
     
@@ -332,22 +365,22 @@ def update_map(selected_segment):
                                    )
     global_map_fig.update_geos(
     lataxis_showgrid=False, lonaxis_showgrid=False,
-    lataxis_range=[-90, 90],  # These are example ranges, adjust as necessary
-    lonaxis_range=[-180, 180],  # These are example ranges, adjust as necessary
+    lataxis_range=[-90, 90],  # adjust as necessary
+    lonaxis_range=[-180, 180],  # adjust as necessary
 )
     # Update the layout of the figure to adjust map size and color bar position
     global_map_fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
         geo=dict(
         projection_scale=1,  # This controls the scale of the geo projection
-        center=dict(lat=0, lon=0),  # This can shift the center of the map
+        center=dict(lat=54, lon=15),  # This can shift the center of the map
         fitbounds="locations",
         bgcolor='rgb(34, 67, 74)',
         showland=True, landcolor='#f4ecce', 
         showocean=True, oceancolor='#aac8d2',  
     ),
-        #width=1000,  # Adjust width to suit your layout
-        #height=600,  # Adjust height to suit your layout
+        #width=1000,  # Adjust width 
+        #height=600,  # Adjust height 
         coloraxis_colorbar=dict(
             x=1.2,  # Adjust as needed to move the color bar closer
             y=0.5,

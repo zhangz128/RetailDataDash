@@ -9,10 +9,11 @@ import pathlib
 PATH = pathlib.Path(__file__).parent.parent.parent
 DATA_PATH = PATH.joinpath('data').resolve()
 df = pd.read_csv(DATA_PATH.joinpath('raw/online_retail.csv'))
-df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
-
 rfm = pd.read_csv(DATA_PATH.joinpath('processed/processed_rfm_model.csv'))
-cluster_counts = rfm['Cluster'].value_counts()
+df=df.merge(rfm[['CustomerID', 'Cluster']], on='CustomerID', how='left')
+
+df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
+cluster_counts = df.groupby('Cluster')['CustomerID'].nunique()
 
 loyal_count = cluster_counts.get('loyal customer', 0)
 potential_count = cluster_counts.get('potential loyal customer', 0)
@@ -81,9 +82,9 @@ layout = html.Div(
             style={'marginBottom': '30px'}  
         ),
 
-        dbc.Row(
-            [dbc.Col(card_loyal, width=3), dbc.Col(card_potential, width=3),
-             dbc.Col(card_new, width=3), dbc.Col(card_loss, width=3)],
+        dbc.Row(id='cards_container'
+            # [dbc.Col(card_loyal, width=3), dbc.Col(card_potential, width=3),
+            # dbc.Col(card_new, width=3), dbc.Col(card_loss, width=3)],
         ),
 
         html.Br(),
@@ -110,7 +111,8 @@ layout = html.Div(
 
 @callback(
     [Output('top_product', 'figure'),
-     Output('top_region', 'figure')],
+     Output('top_region', 'figure'),
+     Output('cards_container', 'children')],
     [Input('date-picker-range', 'start_date'),
      Input('date-picker-range', 'end_date')]
 )
@@ -144,5 +146,64 @@ def update_figures(start_date, end_date):
             title_x=0.5
         )
 
-    return fig_top_product, fig_top_region
+    
+    cluster_counts = filtered_df.groupby('Cluster')['CustomerID'].nunique()
+    loyal_count = cluster_counts.get('loyal customer', 0)
+    potential_count = cluster_counts.get('potential loyal customer', 0)
+    lost_count = cluster_counts.get('lost customer', 0)
+    new_count = cluster_counts.get('new customer', 0)
+
+
+    card_loyal = dbc.Card(
+        dbc.CardBody(
+            [
+                html.H4("Loyal Costumers", className="card-title text-primary"),
+                html.H1(loyal_count, style={'color': '#ffc64b'}),
+            ], className="border-start border-info border-5",
+        ),
+        className="text-center"
+    )
+
+
+    card_potential = dbc.Card(
+        dbc.CardBody(
+            [
+                html.H4("Potential Loyal", className="card-title text-primary"),
+                html.H1(potential_count, style={'color': '#ffc64b'}),
+            ], className="border-start border-info border-5"
+        ),
+        className="text-center",
+    )
+
+
+    card_new = dbc.Card(
+        dbc.CardBody(
+            [
+                html.H4("New Costumers", className="card-title text-primary"),
+                html.H1(new_count, style={'color': '#ffc64b'}),
+            ], className="border-start border-info border-5"
+        ),
+        className="text-center",
+    )
+
+    card_loss = dbc.Card(
+        dbc.CardBody(
+            [
+                html.H4("Loss Costumers", className="card-title text-primary"),
+                html.H1(lost_count, style={'color': '#ffc64b'}),
+            ], className="border-start border-info border-5"
+        ),
+        className="text-center",
+    )
+
+    cards = dbc.Row(
+        [
+            dbc.Col(card_loyal, width=3),
+            dbc.Col(card_potential, width=3),
+            dbc.Col(card_new, width=3),
+            dbc.Col(card_loss, width=3)
+        ]
+    )
+
+    return fig_top_product, fig_top_region, cards
 
