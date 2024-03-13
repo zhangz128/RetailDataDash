@@ -37,14 +37,23 @@ SIDEBAR_STYLE = {
 # }
 
 HEADER_STYLE = {
-    "padding": "20px",
+    "padding": "10px",
     "fontSize": "60px",
     "textAlign": "center",
     #"background": "#F0F0F0",
     #"color": "#125B77",
 }
 
+SUBHEADER_STYLE = {
+    #"padding": "20px",
+    "fontSize": "40px",
+    "textAlign": "center",
+    #"background": "#F0F0F0",
+    #"color": "#125B77",
+}
+
 header = html.Div("ONLINE RETAIL SALES DATA", style=HEADER_STYLE)
+subheader = html.Div("RFM Model", style=SUBHEADER_STYLE)
 
 
 sidebar = dbc.Nav(
@@ -80,6 +89,7 @@ app.layout = dbc.Container(
                 dbc.Col(
                     [
                         dbc.Row(header),  # Header row
+                        dbc.Row(subheader),
                         dbc.Row(html.Div(dash.page_container))  # Page container row
                     ],
                     xs=8, sm=8, md=10, lg=10, xl=10, xxl=10,  # Adjust sizes for content on different screens
