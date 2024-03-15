@@ -1,16 +1,40 @@
-# RetailDataDash
+﻿# Online Retail Sales Data	 App
 
-## Sketch
+Welcome to our project! 
+ 
+- [Description](#description) 
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [Data Resource](#data-resource)
 
-![image](https://github.com/ubco-mds-2023-labs/milestone1-group18/blob/main/img/sketch1.jpg)
-![image](https://github.com/ubco-mds-2023-labs/milestone1-group18/blob/main/img/sketch2.jpg)
+## Description
+![app](https://github.com/zhangz128/RetailDataDash/blob/main/doc/img.png)
 
-## Description of APP
+This [APP](https://retaildataapp-2b74f9cf79d1.herokuapp.com/) is a visualization dashboard for online retail sales data, designed for the sales operations departments of online retail businesses, offers customer behavior and sales performance to optimize strategic decisions and enhance operational efficiency.
 
-Our visualization dashboard is meticulously engineered for the sales operations departments of online retail businesses, designed to offer key insights into the market and customer behaviors to optimize strategic decisions and enhance operational efficiency. This intuitive tool aggregates extensive sales data, enabling the identification of top-selling products and the analysis of customer geographic locations, thus uncovering the relationship between product sales volumes and consumer behaviors.
+**Overview**
 
-Central to our dashboard is the transaction analysis feature, which accentuates popular products by sales volume, complemented by a global map that visualizes customer distribution, enabling a detailed examination of sales data on a country-by-country basis. Additionally, the dashboard offers a comprehensive view of sales trends, equipping users with the means to detect shifts in market dynamics.
+- Customer Classification (RFM Model)
+- Top Sales Products
+- Top Saels Regions
 
-Integral to our platform is the RFM (Recency, Frequency, Monetary) model, a sophisticated module that allows for the precise segmentation of customer groups. By leveraging the RFM analysis, users can enact tailored strategies for different customer segments, enhancing engagement, and fostering loyalty. The model's segmentation facilitates targeted marketing efforts, personalized promotions, and optimized resource allocation, ensuring that the most valuable customers are nurtured and potential growth opportunities within customer segments are capitalized upon.
+**Region Analysis**
 
-This tool not only delivers a meticulous analysis of sales trends but also provides the strategic advantage of the RFM model's benefits. It is our mission to present a holistic platform that uncovers growth opportunities, informs inventory management, and underpins effective marketing campaigns, all driving towards robust sales growth and expansive market outreach.
+- Sales Trend (ARIMA Model)
+- Customer Segmentation
+
+## Contributing
+
+We are open to developers interested in data science, analytics, and visualization to contribute to this project. By collaborating, we can refine this app to provide even deeper insights into sales data or adapte to any sales dataset. Details could be found in [`CONTRIBUTING.md`](https://github.com/zhangz128/RetailDataDash/blob/main/CONTRIBUTING.md)
+
+This app using [`Dash`](https://dash.plotly.com/), visualizing by [`plotly`](https://dash.plotly.com/) package, develop on [`Heroku`](https://dashboard.heroku.com/).
+
+## Code of Conduct
+
+Be welcoming, friendly, and patient. Detailed descriptions of these points can be found in [`CODE_OF_CONDUCT.md`](https://github.com/zhangz128/RetailDataDash/blob/main/CODE_OF_CONCUCT.md).
+
+## Data Resource
+
+**UK Online Retail Sales and Customer Transaction Data** By UCI  [[source]](https://data.world/uci)
+
+
