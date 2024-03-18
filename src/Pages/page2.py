@@ -102,107 +102,49 @@ layout = html.Div([
 )
 def update_figures(clickData):
     base_layout = dict(
-    paper_bgcolor='rgb(34, 67, 74)',  
-    plot_bgcolor='rgb(34, 67, 74)', 
-    font=dict(color='white'),  
-)
+        paper_bgcolor='rgb(34, 67, 74)',  
+        plot_bgcolor='rgb(34, 67, 74)', 
+        font=dict(color='white'),  
+    )
 
     if clickData is not None:
         country_code = clickData['points'][0]['location']
         selected_country = country_name_mapping.get(country_code, "Unknown")
         filtered_df = df[df['iso_alpha'] == country_code]
-
         df_ts = filtered_df[['InvoiceDate', 'Total_Sale']]
         df_ts['InvoiceDate'] = pd.to_datetime(df_ts['InvoiceDate'])
+        df_ts.set_index('InvoiceDate', inplace=True)
+        monthly_sales = df_ts['Total_Sale'].resample('M').sum()
 
-        if df_ts['InvoiceDate'].dt.date.nunique() == 1:
-            df_ts.set_index('InvoiceDate', inplace=True)
-            monthly_sales = df_ts['Total_Sale'].resample('M').sum()
-            trend_fig = go.Figure()
-            trend_fig.add_trace(
-                go.Bar(x=monthly_sales.index, 
+        trend_fig = go.Figure()
+        trend_fig.add_trace(
+            go.Bar(x=monthly_sales.index, 
+                   y=monthly_sales.values, 
+                   marker=dict(color='rgba(248,191,93,0.7)'), 
+                   name='Monthly Sales',
+                   hovertemplate='%{y}<extra></extra>'))
+        trend_fig.add_trace(
+            go.Scatter(x=monthly_sales.index, 
                        y=monthly_sales.values, 
-                       marker=dict(color='rgba(248,191,93,0.7)'), 
-                       name='Monthly Sales',
+                       mode='lines+markers',
+                       marker=dict(color='rgba(0,143,140,1)'),
+                       name='Sales Trend',
                        hovertemplate='%{y}<extra></extra>'))
-            trend_fig.update_layout(
-                **base_layout,    
-                title={
+        trend_fig.update_layout(
+            **base_layout,    
+            title={
                 'text': f'Sales Trend for {selected_country}',
                 'y':0.9,
                 'x':0.5,
                 'xanchor': 'center',
                 'yanchor': 'top',
                 'font': {
-                    #'family': 'Arial, sans-serif',
                     'size':24,
-                
                 }
             },     
             xaxis_title='Month',     
             yaxis_title='Sales',
-            )
-        else:
-            df_ts.set_index('InvoiceDate', inplace=True)
-            day_sales = df_ts['Total_Sale'].resample('D').sum()
-            day_diff_sales = day_sales.diff().dropna()
-            model = SARIMAX(day_diff_sales, order=(0,0,2), seasonal_order=(1,0,2,7)) 
-            model_fit = model.fit(disp=False)  
-            forecast = model_fit.forecast(steps=82)
-            forecast_df = pd.DataFrame(forecast)
-            forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
-            df_ts = df_ts.combine_first(forecast_df)
-            monthly_sales = df_ts['Total_Sale'].resample('M').sum()
-
-            trend_fig = make_subplots(specs=[[{"secondary_y": False}]]) 
-            trend_fig.add_trace(          
-            go.Bar(x=monthly_sales.index[:-3],             
-                y=monthly_sales[:-3],
-                marker=dict(color='rgba(248,191,93,0.7)'),             
-                name='Monthly Sales',
-                hovertemplate='%{y}<extra></extra>'),          
-                secondary_y=False,      
-                ) 
-            trend_fig.add_trace(          
-            go.Bar(                  
-                x=monthly_sales.index[-3:],                   
-                y=monthly_sales[-3:],                 
-                marker=dict(color='rgba(255, 0, 0, 0.5)'),
-                name='Prediction',
-                hovertemplate='%{y}<extra></extra>'     
-                )) 
-            trend_fig.add_trace(          
-            go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)'),
-                       hovertemplate='%{y}<extra></extra>'),          
-            secondary_y=False,           
-            ) 
-    
-            trend_fig.update_layout(
-                **base_layout,    
-                title={
-                'text': f'Sales Trend for {selected_country}',
-                'y':0.9,
-                'x':0.5,
-                'xanchor': 'center',
-                'yanchor': 'top',
-                'font': {
-                    #'family': 'Arial, sans-serif',
-                    'size':24,
-                
-                }
-            },
-            legend=dict(
-                orientation='h',
-                yanchor='bottom',
-                y=-0.2,
-                xanchor='left',
-                x=0.6,
-                font=dict(size=10)
-            ),   
-            xaxis_title='Month',     
-            yaxis_title='Sales',
-            )
-
+        )
         cluster_counts = filtered_df.groupby('Cluster')['CustomerID'].nunique().reset_index()
         cluster_counts.columns = ['Cluster', 'count']
         custom_colors = ['#dc541b','#2e7d5e','#de9f37','#FFF7C5']
@@ -238,69 +180,39 @@ def update_figures(clickData):
     
         return trend_fig, pie_fig
     else:
-        # Return default figures
-        df1 = df
-        df_ts = df1[['InvoiceDate', 'Total_Sale']]
+        df_ts = df[['InvoiceDate', 'Total_Sale']]
+        df_ts['InvoiceDate'] = pd.to_datetime(df_ts['InvoiceDate'])
         df_ts.set_index('InvoiceDate', inplace=True)
-        day_sales = df_ts['Total_Sale'].resample('D').sum()
-        day_diff_sales = day_sales.diff().dropna()
-
-        model = SARIMAX(day_diff_sales, order=(0,0,2), seasonal_order=(1,0,2,7)) 
-        model_fit = model.fit(disp=False)  
-        forecast = model_fit.forecast(steps=82)
-        forecast_df = pd.DataFrame(forecast)
-        forecast_df.rename(columns={'predicted_mean': 'Total_Sale'}, inplace=True)
-        df_ts = df_ts.combine_first(forecast_df)
         monthly_sales = df_ts['Total_Sale'].resample('M').sum()
-
-        trend_fig = make_subplots(specs=[[{"secondary_y": False}]]) 
-        trend_fig.add_trace(          
-        go.Bar(x=monthly_sales.index[:-3],             
-                y=monthly_sales[:-3],
-                marker=dict(color='rgba(248,191,93,0.7)'),             
-                name='Monthly Sales',
-                hovertemplate='%{y}<extra></extra>'),          
-                secondary_y=False,      
-                ) 
-        trend_fig.add_trace(          
-            go.Bar(                  
-                x=monthly_sales.index[-3:],                   
-                y=monthly_sales[-3:],                 
-                marker=dict(color='rgba(255, 0, 0, 0.5)'),
-                name='Prediction',
-                hovertemplate='%{y}<extra></extra>'     
-                )) 
-        trend_fig.add_trace(          
-            go.Scatter(x=monthly_sales.index, y=monthly_sales, line=dict(color='rgba(0,143,140,1)'),
-                       hovertemplate='%{y}<extra></extra>'),          
-            secondary_y=False,           
-            ) 
-    
+        trend_fig = go.Figure()
+        trend_fig.add_trace(
+            go.Bar(x=monthly_sales.index, 
+                   y=monthly_sales.values, 
+                   marker=dict(color='rgba(248,191,93,0.7)'), 
+                   name='Monthly Sales',
+                   hovertemplate='%{y}<extra></extra>'))
+        trend_fig.add_trace(
+            go.Scatter(x=monthly_sales.index, 
+                       y=monthly_sales.values, 
+                       mode='lines+markers',
+                       marker=dict(color='rgba(0,143,140,1)'),
+                       name='Sales Trend',
+                       hovertemplate='%{y}<extra></extra>'))
         trend_fig.update_layout(
-                **base_layout,    
-                title={
-                'text': f'Sales Trend in Total',
+            **base_layout,    
+            title={
+                'text': 'Sales Trend in Total',
                 'y':0.9,
                 'x':0.5,
                 'xanchor': 'center',
                 'yanchor': 'top',
                 'font': {
-                    #'family': 'Arial, sans-serif',
                     'size':24,
-                
                 }
             },
-            legend=dict(
-                orientation='h',
-                yanchor='bottom',
-                y=-0.2,
-                xanchor='left',
-                x=0.6,
-                font=dict(size=10)
-            ),
             xaxis_title='Month',     
             yaxis_title='Sales',
-            )
+        )
         
         cluster_counts = df.groupby('Cluster')['CustomerID'].nunique().reset_index()
         cluster_counts.columns = ['Cluster', 'count']
