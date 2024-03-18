@@ -9,7 +9,7 @@ Welcome to our project!
 
 ## Description
 ![app](https://github.com/zhangz128/RetailDataDash/blob/main/doc/img.png)
-
+![app](https://github.com/zhangz128/RetailDataDash/blob/main/doc/2img.png)
 This [APP](https://retaildataapp-2b74f9cf79d1.herokuapp.com/) is a visualization dashboard for online retail sales data, designed for the sales operations departments of online retail businesses, offers customer behavior and sales performance to optimize strategic decisions and enhance operational efficiency.
 
 **Overview**
