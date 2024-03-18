@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import dash
 from dash import Dash, html, dash_table, dcc, callback
 from dash.dependencies import Input, Output
@@ -346,27 +347,29 @@ def update_map(selected_segment):
         filtered_df = df.copy()
     else:
         cluster_name = cluster_mapping[selected_segment]
-    # This assumes you have a way to filter your `df` based on the segmentation, which isn't shown here
         filtered_df = df[df['Cluster'] == cluster_name]  # Example filter, adjust to your dataframe
     
     # Group by country and sum total sales again for the filtered dataset
-    # country_sales = filtered_df.groupby('Country')['CustomerID'].unique().reset_index()
-    # country_sales['iso_alpha'] = country_sales['Country'].apply(get_iso_alpha_3)
-    country_customers = filtered_df.groupby('Country')['CustomerID'].nunique().reset_index()
-    country_customers.rename(columns={'CustomerID': 'Number_of_Customers'}, inplace=True)
-    country_customers['iso_alpha'] = country_customers['Country'].apply(get_iso_alpha_3)
-    
-    global_map_fig = px.choropleth(country_customers,
+    country_sales = filtered_df.groupby('Country')['Total_Sale'].sum().reset_index()
+    country_sales['iso_alpha'] = country_sales['Country'].apply(get_iso_alpha_3)
+    # country_customers = filtered_df.groupby('Country')['CustomerID'].nunique().reset_index()
+    # country_customers.rename(columns={'CustomerID': 'Number_of_Customers'}, inplace=True)
+    # country_customers['iso_alpha'] = country_customers['Country'].apply(get_iso_alpha_3)
+    min_value = country_sales['Total_Sale'].min()
+    max_value = country_sales['Total_Sale'].max()
+    tick_values = np.linspace(min_value, max_value, num=50)
+
+    global_map_fig = px.choropleth(country_sales,
                                    locations='iso_alpha',
-                                   color='Number_of_Customers',
-                                   hover_name='Country',  # Make sure this is a column in country_sales
+                                   color='Total_Sale',
+                                   hover_name='Country', 
                                    projection='natural earth',
-                                   range_color=[0, 100]
+                                   range_color=[0, 500000]
                                    )
     global_map_fig.update_geos(
     lataxis_showgrid=False, lonaxis_showgrid=False,
-    lataxis_range=[-90, 90],  # adjust as necessary
-    lonaxis_range=[-180, 180],  # adjust as necessary
+    lataxis_range=[-90, 90],  
+    lonaxis_range=[-180, 180],  
 )
     # Update the layout of the figure to adjust map size and color bar position
     global_map_fig.update_layout(
@@ -382,10 +385,15 @@ def update_map(selected_segment):
         #width=1000,  # Adjust width 
         #height=600,  # Adjust height 
         coloraxis_colorbar=dict(
-            x=1.2,  # Adjust as needed to move the color bar closer
+            x=1.0,  # Adjust as needed to move the color bar closer
             y=0.5,
             lenmode='fraction',  # Use 'fraction' to scale the color bar size relative to the plot
             len=0.7,  # Length of the color bar (70% of the plot height in this case)
+            title='Sales', 
+            ticks='outside', 
+            tickvals=tick_values,
+            ticktext=[f"{val:,.0f}" for val in tick_values],
+            tickfont=dict(size=12, color='white',)
         ),
         paper_bgcolor='rgb(34, 67, 74)',
         #plot_bgcolor='rgb(34, 67, 74)',
